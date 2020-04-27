@@ -5,12 +5,14 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 
 class Utils {
@@ -19,6 +21,8 @@ class Utils {
         private val PERMISSION_ID = 1000
         private val REQUEST_IMAGE_CAPTURE = 2000
     }
+
+    private val mNetworkCallback: ConnectivityManager.NetworkCallback = TODO()
 
     /**
      * Toast
@@ -59,20 +63,21 @@ class Utils {
     /**
      * SharedPreferences
      */
+
+    /**
+     * Permission
+     */
+    fun havePermissionFor(context: Context, permissionName: String): Boolean
+            = (
+            ContextCompat.checkSelfPermission(context, permissionName)
+            == PackageManager.PERMISSION_GRANTED
+            )
+
+    /**
+     * Network
+     */
     private fun isNetworkConnected() {
 
-    }
-
-    private fun checkPermissions(context: Context): Boolean {
-        if(ActivityCompat.checkSelfPermission(context,
-                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(context,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
-            return true
-        }
-
-        return false
     }
 
     private fun requestPermissions(activity: Activity) {
