@@ -2,34 +2,30 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:gravity="center_horizontal|center_vertical">
 
     <Button
-        android:id="@+id/toastButton1"
+        android:id="@+id/btn_network"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:text="Short Toast"/>
+        android:text="네트워크 상태 체크"/>
 
     <Button
-        android:id="@+id/toastButton2"
+        android:id="@+id/btn_camera"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:text="Long Toast"/>
+        android:text="카메라 호출"/>
 
     <Button
-        android:id="@+id/snackbarButton1"
+        android:id="@+id/btn_gallery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:text="Short Snackbar"/>
+        android:text="갤러리 호출"/>
 
-    <Button
-        android:id="@+id/snackbarButton2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:text="Long Snackbar"/>
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

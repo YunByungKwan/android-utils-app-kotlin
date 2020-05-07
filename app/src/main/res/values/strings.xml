@@ -1,3 +1,31 @@
 <resources>
+
     <string name="app_name">SimpleApp</string>
+
+    <string name="toast_button_text">Toast 띄우기</string>
+
+    <string name="snackbar_button_text">Snackbar 띄위기</string>
+
+    <string name="permission_button_text">권한 체크</string>
+
+    <string name="network_button_text">네트워크 상태 체크</string>
+
+    <string name="location_button_text">위치 확인</string>
+
+    <string name="sms_button_text">SMS</string>
+
+    <string name="nfc_button_text">NFC</string>
+
+    <string name="audio_button_text">음성</string>
+
+    <string name="dialog_button_text">다이얼로그</string>
+
+    <string name="rooting_check_button_text">루팅 체크</string>
+
+    <string name="data_save_load_button_text">SharedPreferences</string>
+
+    <string name="camera_button_text">카메라</string>
+
+    <string name="gallery_button_text">갤러리</string>
+
 </resources>
