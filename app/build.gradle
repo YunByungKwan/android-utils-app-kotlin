@@ -24,6 +24,11 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
 }
 
 dependencies {
@@ -38,7 +43,18 @@ dependencies {
 
     implementation 'com.google.android.material:material:1.1.0'
 
-    // google map api & location
+    // Google map api & location
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
+
+    // Biometric
+    implementation 'androidx.biometric:biometric:1.0.0-beta01'
+
+    // Sms
+    implementation 'com.google.android.gms:play-services-auth:16.0.1'
+    implementation 'com.google.android.gms:play-services-auth-api-phone:16.0.0'
+
+    // Qr code
+    implementation 'com.google.zxing:core:3.3.0'
+    implementation ('com.journeyapps:zxing-android-embedded:3.6.0') { transitive = false }
 }

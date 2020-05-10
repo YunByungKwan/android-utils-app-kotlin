@@ -4,13 +4,27 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.biometric.BiometricPrompt
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.hardware.fingerprint.FingerprintManagerCompat
+import com.example.simpleapp.MainActivity
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_main.*
+import java.util.concurrent.Executor
+import kotlin.collections.listOf as listOf1
 
 class Utils(_context: Context, _activity: Activity) {
 
@@ -75,7 +89,7 @@ class Utils(_context: Context, _activity: Activity) {
             .show()
     }
 
-    /** permission */
+    /** Permission */
 
     /** 해당 권한이 있는지 판별 */
     fun hasPermissionFor(permissionName: String): Boolean = (
@@ -83,7 +97,7 @@ class Utils(_context: Context, _activity: Activity) {
                     == PackageManager.PERMISSION_GRANTED)
 
     /** 해당 권한에 대한 요청을 거부한 적이 있는지 판별 */
-    fun deniedPermission(permissionName: String): Boolean = (
+    fun rejectPermission(permissionName: String): Boolean = (
             ActivityCompat.shouldShowRequestPermissionRationale(activity, permissionName))
 
     /** 해당 권한 리스트를 요청 */
@@ -91,32 +105,47 @@ class Utils(_context: Context, _activity: Activity) {
         ActivityCompat.requestPermissions(activity, permissionArray, REQUEST_PERMISSIONS_CODE)
     }
 
-    /** 해당 권한 판별 후 없을 경우 요청 */
+    /** 1개의 권한 체크 */
     fun checkPermission(permissionName: String) {
         if(hasPermissionFor(permissionName)) {
-            Log.d(TAG_PERMISSION, "Permission granted")
+            Log.d(TAG_PERMISSION, "Permission is found.")
         } else {
-            Log.d(TAG_PERMISSION, "Permission denied")
+            Log.d(TAG_PERMISSION, "Permission is not found.")
 
-            if(deniedPermission(permissionName)) { // 거절한적있음
-                Log.d(TAG_PERMISSION, "shouldShowRequestPermissionRationale true")
+            if(rejectPermission(permissionName)) {
+                Log.d(TAG_PERMISSION, "Permission is denied.")
 
                 /** 권한 필요하다는 다이얼로그 띄우기 */
                 val alertDialog = AlertDialog.Builder(context)
                     .setTitle("권한 필요")
                     .setMessage("앱을 사용하기 위해 해당 권한 승인이 필요합니다.")
-                    .setPositiveButton("확인") {dialog, which ->
+                    .setPositiveButton("확인") {_, _ ->
                         requestPermissions(arrayOf(permissionName))
                     }
                     .setNegativeButton("취소", null)
                     .create()
                     .show()
-            } else { // 거절한적 없음
-                Log.d(TAG_PERMISSION, "shouldShowRequestPermissionRationale false")
+            } else {
+                Log.d(TAG_PERMISSION, "Permission is not denied.")
 
                 requestPermissions(arrayOf(permissionName))
             }
+        }
+    }
 
+    /** 2개 이상의 권한 체크 */
+    fun checkPermissions(requestedPermissions: Array<String>) {
+        var deniedPermissions = ArrayList<String>()
+
+        for(permission in requestedPermissions) {
+            if(!hasPermissionFor(permission)) {
+                deniedPermissions.add(permission)
+            }
+        }
+
+        if(deniedPermissions.isNotEmpty()) {
+            val array = arrayOfNulls<String>(deniedPermissions.size)
+            requestPermissions(deniedPermissions.toArray(array) as Array<out String>)
         }
     }
 
@@ -133,8 +162,49 @@ class Utils(_context: Context, _activity: Activity) {
 
     /** 네트워크 상태를 판별 */
     fun isNetworkConnected(): Boolean {
-        return false
+        val connectivityManger
+                = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val nw = connectivityManger.activeNetwork ?: return false
+            val actNw = connectivityManger.getNetworkCapabilities(nw) ?: return false
+            return when {
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                else -> false
+            }
+        } else {
+            val nwInfo = connectivityManger.activeNetworkInfo ?: return false
+        }
+
+        return true
     }
+
+    /** Storage */
+
+    fun getIntent(type: String, action: String): Intent {
+        val intent = Intent()
+        intent.type= type
+        intent.action = action
+
+        return intent
+    }
+
+    /** Location */
+
+    /** 현재 위치를 불러옴 */
+    fun getLastLocation(): Location? {
+        var lastLocation: Location? = null
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
+
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location : Location? ->
+                lastLocation = location!!
+            }
+        return lastLocation
+    }
+
+    /** Biometric */
 
     companion object {
         const val REQUEST_PERMISSIONS_CODE = 1000
